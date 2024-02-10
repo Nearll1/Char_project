@@ -23,7 +23,7 @@ change the code from :
 ```
 os.getenv(...)
 ```
-tou you credentials
+to you you credentials
 
 ***Important Note***
 
