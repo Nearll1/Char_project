@@ -1,0 +1,10 @@
+#Ignore file type:
+*.env
+*.pt
+*.wav
+
+#ignore folder: 
+
+.venv/
+__pycache__/
+Database/

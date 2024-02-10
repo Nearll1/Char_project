@@ -1,0 +1,8 @@
+langchain
+python-dotenv
+pyvts
+torch
+pyaudio
+wave
+pysentimiento
+chromadb
