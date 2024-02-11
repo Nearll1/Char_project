@@ -5,7 +5,7 @@
 # Resume:
 
 This is a Chatbot that uses LLM and a VTS model to stream!
-It is in the early develpment stage so dont expect much
+It is in the early development stage so dont expect much
 
 # How to install/run:
 
@@ -23,7 +23,7 @@ change the code from :
 ```
 os.getenv(...)
 ```
-tou you credentials
+to your credentials
 
 ***Important Note***
 
