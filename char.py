@@ -20,7 +20,8 @@ class Char:
         self.vectordb = Chroma(persist_directory=self.persist_directory,embedding_function=self.embedding)
         self.retriever = self.vectordb.as_retriever(search_kwargs=dict(k=2))
         self.mem = VectorStoreRetrieverMemory(retriever=self.retriever)
-
+        self.llm = Ollama(temperature=0.5,base_url=self.url,model=self.model,verbose=False)
+        self.conversation = ConversationChain(llm=self.llm,prompt=self.final_prompt,memory=self.mem,verbose=True)
 
 
         self.examples = [
@@ -58,20 +59,19 @@ class Char:
         )
 
     def response(self,s) ->str :
-        self.user = s
         
-        self.llm = Ollama(temperature=0.5,base_url=self.url,model=self.model,verbose=False)
-        self.conversation = ConversationChain(llm=self.llm,prompt=self.final_prompt,memory=self.mem,verbose=True)
-
-        self.cv = self.conversation.predict(input=self.user)
+        self.cv = self.conversation.predict(input=s)
         print(self.cv)
-        self.mem.save_context({"input":self.user},{"output":self.cv})
-        
+
+        self.mem.save_context({"input":s},{"output":self.cv})
         self.vectordb.persist()
+
         emotion = self.emotion_analyze(self.cv)
         print(emotion)
+
         clean_text = self.clean_emotion_action_text_for_speech(self.cv)
         print(clean_text)
+
         return clean_text,emotion
     
     
@@ -84,9 +84,9 @@ class Char:
         emotions = self.emotion_analyzer.predict(emotions_text).probas
         ordered = dict(sorted(emotions.items(), key=lambda x: x[1]))
         ordered = [k for k, v in ordered.items()] # top two emotion
-        ordered.reverse()
+        #ordered.reverse()
         
-        return ordered[:2]
+        return ordered[:2:-1]
     
     def clean_emotion_action_text_for_speech(self, text):
         clean_text = re.sub(r'\*.*?\*', '', text) # remove *action* from text

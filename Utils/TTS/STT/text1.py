@@ -11,10 +11,10 @@ from bark.api import semantic_to_waveform
 
 
 
-def TTS(text): 
+def STT(text): 
     ...
 
 
     
 if __name__ == "__main__":
-    TTS('Hello-- how are you doing today?[laughs]')
+    STT('Hello-- how are you doing today?[laughs]')

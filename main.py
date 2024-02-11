@@ -34,18 +34,18 @@ asyncio.run(control.connect_auth())
       
 
 #Where the magic happens
-def main():
+async def main():
     while True:
         while(len(bot.chat_history) == 0):
             print("no new messages")
             time.sleep(1)
+        
+        if len(bot.chat_history) > 5:
+            bot.chat_history = bot.chat_history[-5:]
             
         transcript = f'{bot.chat_history[0][0]} : {bot.chat_history[0][1]}'
         print(transcript)
         bot.chat_history.pop(0)
-        
-        while(len(bot.chat_history) > 5):
-            bot.chat_history.pop(0)
         
         rp = Char(ollama_api,model='mistral')
         response,emotion = rp.response(transcript)
@@ -56,9 +56,9 @@ def main():
         audio_file = tts(response)
         stream(audio_file)
         if emotion:
-            asyncio.run(control.trigger(emotion))
+            control.trigger(emotion)
         print('Response Completed!')
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

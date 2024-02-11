@@ -23,7 +23,8 @@ class Emotion:
     async def connect_auth(self):
         
         await self.myvts.connect()
-        await self.myvts.request_authenticate_token()
+        await print(self.myvts.request_authenticate_token())
+        
         await self.myvts.request_authenticate()
         await self.myvts.close()
     
@@ -62,7 +63,6 @@ class Emotion:
         send_hotkeys_request = self.myvts.vts_request.requestTriggerHotKey(hotkeyID=buttom)
 
         await self.myvts.request(send_hotkeys_request)
-        
         await self.myvts.close()
     
 if __name__ == "__main__":
