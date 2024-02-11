@@ -2,6 +2,7 @@ import os
 import torch
 import pyaudio
 import wave
+import time
 
 def tts(text,):
     device = torch.device('cpu')
@@ -30,15 +31,24 @@ def tts(text,):
 
 def stream(n: str) -> None:
     CHUNK = 1024
+    
     with wave.open(f'{n}.wav','rb') as wf:
+        def callback(in_data,frame_count,time_info,status):
+            data = wf.readframes(frame_count)
+            return (data,pyaudio.paContinue)
+        
         p = pyaudio.PyAudio()
         stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
                         channels=wf.getnchannels(),
                         rate=wf.getframerate(),
-                        output=True)
+                        output=True,
+                        stream_callback=callback)
+        
     
-        while len(data := wf.readframes(CHUNK)):
-            stream.write(data)
+        while stream.is_active():
+            time.sleep(0.1)
+
+            
 
         stream.close()
         p.terminate()

@@ -57,7 +57,7 @@ class Char:
         self.mem1.save_context({"input":s},{"output":self.cv})
         self.vectordb.persist()
 
-        emotion = self.emotion_analyzer(self.cv)
+        emotion = self.emotion_analyze(self.cv)
         print(emotion)
 
         clean_text = self.clean_emotion_action_text_for_speech(self.cv)
@@ -83,4 +83,12 @@ class Char:
         clean_text = clean_text.replace(f'{self.name}:', '') # replace -> name: "dialog"
         return clean_text
 
+if __name__ == '__main__':
+    from dotenv import load_dotenv
+    import os
+    load_dotenv()
+    url = os.getenv('OLLAMA_API')
+
+    r = Char(url=url)
+    r.response(input('>> '))
         

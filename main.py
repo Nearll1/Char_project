@@ -20,21 +20,16 @@ token = os.getenv('OAUTH_TOKEN')
 #Ollama api (NO CHATGPT FOR YA!)
 ollama_api = os.getenv('OLLAMA_API')
 
-#Start receiving msg from twitch live chat
-bot = twitchbot(channel,nickname,token)
-threading.Thread(target=bot.run()).start()
-print(bot.chat_history)
 
 #Run the VTS controller
 control = Emotion()
 asyncio.run(control.connect_auth())
 
+mode = input('Mode >> ')
 
-
-      
 
 #Where the magic happens
-async def main():
+def main():
     while True:
         while(len(bot.chat_history) == 0):
             print("no new messages")
@@ -56,9 +51,36 @@ async def main():
         audio_file = tts(response)
         stream(audio_file)
         if emotion:
-            control.trigger(emotion)
+            asyncio.run(control.trigger(emotion))
         print('Response Completed!')
 
+def mode_0():
+    while True:
+        rp = Char(ollama_api,model='mistral')
+        user_msg = input('>')
+        if user_msg.lower() == 'exit':
+            break
+        response,emotion = rp.response(user_msg)
+        print(response)
+        print('--------')
+        print(emotion)
+            
+        audio_file = tts(response)
+        if not emotion:
+            stream(audio_file)
+            print('No emotion')
+        stream(audio_file)
+        asyncio.run(control.trigger(emotion))
+        print('Response Completed!')  
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    if mode == '1':
+        #Start receiving msg from twitch live chat
+        bot = twitchbot(channel,nickname,token)
+        threading.Thread(target=bot.run()).start()
+        print(bot.chat_history)
+
+        main()
+
+    else:
+        mode_0()

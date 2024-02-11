@@ -23,7 +23,8 @@ class Emotion:
     async def connect_auth(self):
         
         await self.myvts.connect()
-        await print(self.myvts.request_authenticate_token())
+        await self.myvts.request_authenticate_token()
+        
         
         await self.myvts.request_authenticate()
         await self.myvts.close()
@@ -53,7 +54,9 @@ class Emotion:
         
         for emotion in emotions:
             if emotion in self.hotkeys_list:
+                    print(emotion)
                     buttom = self.hotkeys_list[emotion]
+                    print(buttom)
             break
     
         if not buttom:
