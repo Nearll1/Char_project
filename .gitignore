@@ -8,3 +8,7 @@
 .venv/
 __pycache__/
 Database/
+
+#ignore file:
+
+Char_memory_prototype.py
