@@ -18,7 +18,7 @@ nickname = os.getenv('NICKNAME')
 token = os.getenv('OAUTH_TOKEN')
 
 #Ollama api (NO CHATGPT FOR YA!)
-ollama_api = os.getenv('OLLAMA_API')
+ollama_api = '...'
 
 
 #Run the VTS controller
@@ -40,9 +40,10 @@ def main():
             
         transcript = f'{bot.chat_history[0][0]} : {bot.chat_history[0][1]}'
         print(transcript)
-        bot.chat_history.pop(0)
         
-        rp = Char(ollama_api,model='mistral')
+        
+        rp = Char(url=ollama_api,model='mistral')
+        bot.chat_history.pop(0)
         response,emotion = rp.response(transcript)
         print(response)
         print('--------')

@@ -57,10 +57,12 @@ class Emotion:
                     print(emotion)
                     buttom = self.hotkeys_list[emotion]
                     print(buttom)
+                    
+                    if not buttom:
+                        return None
             break
     
-        if not buttom:
-            return None
+        
         
             
         send_hotkeys_request = self.myvts.vts_request.requestTriggerHotKey(hotkeyID=buttom)
