@@ -29,6 +29,10 @@ ollama_api = 'https://3996-34-142-128-239.ngrok-free.app'
 control = Emotion()
 asyncio.run(control.connect_auth())
 
+#Instanciate the chatbot
+rp = Char(url=ollama_api,model='mistral',path=path)
+
+#Mode 1 to run as a streamer else run as a normal chatbot
 mode = input('Mode >> ')
 
 
@@ -55,7 +59,7 @@ async def main():
   
 
 #get the user input
-def get_transcript():
+def get_transcript() -> str:
     if mode == '1':
         while(len(bot.chat_history) == 0):
                 print("no new messages")
@@ -73,8 +77,6 @@ def get_transcript():
 
 #get the AI response
 def get_response(s: str):
-    rp = Char(url=ollama_api,model='mistral',path=path)
-        
     response,emotion = rp.response(s)
 
     return response,emotion

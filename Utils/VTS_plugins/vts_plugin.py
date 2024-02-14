@@ -4,6 +4,7 @@ import asyncio
 class Emotion:
     def __init__(self):
         
+        #change the list to match with your model
         self.hotkeys_list = {
             "neutral": None,
             "agree": "31abbc83310a49239e127d059fcc68ad",
@@ -19,13 +20,12 @@ class Emotion:
             "authentication_token_path": "./token.txt"
         }
         self.myvts = pyvts.vts(plugin_info=self.plugin_info)
+
     #connect the plugin to VTS   
     async def connect_auth(self):
         
         await self.myvts.connect()
         await self.myvts.request_authenticate_token()
-        
-        
         await self.myvts.request_authenticate()
         await self.myvts.close()
     

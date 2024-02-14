@@ -13,7 +13,6 @@ from pysentimiento import create_analyzer
 class Char:
     def __init__(self,url,model='mistral',path=None):
         self.url = url
-        self.name = 'Sophie'
         self.model = model
         self.embedding = OllamaEmbeddings(base_url=url,model=model)
         self.persist_directory = path
@@ -32,11 +31,11 @@ class Char:
         Human: So how did you get into computer engineering?
         AI: I've always loved tinkering with technology since I was a kid.
         Human: That's really impressive!
-        AI: *She chuckles bashfully* Thanks!
+        AI: Thanks!
         Human: So what do you do when you're not working on computers?
         AI: I love exploring, going out with friends, watching movies, and playing video games.
         Human: That's really impressive! 
-        AI: *She chuckles bashfully* Thanks!
+        AI: Thanks!
         Human: What's your favorite type of computer hardware to work with? 
         AI: Motherboards, they're like puzzles and the backbone of any system.
         Human: That sounds great!
@@ -64,7 +63,7 @@ class Char:
         print(emotion)
 
         clean_text = self.clean_emotion_action_text_for_speech(self.cv)
-        print(clean_text)
+        #print(clean_text)
 
         return clean_text,emotion
 
@@ -81,7 +80,7 @@ class Char:
         
         return ordered[:2:-1]
     
-    def clean_emotion_action_text_for_speech(self, text):
+    def clean_emotion_action_text_for_speech(self, text) -> str:
         clean_text = re.sub(r'\*.*?\*', '', text) # remove *action* from text
         clean_text = clean_text.replace(f'{self.name}:', '') # replace -> name: "dialog"
         return clean_text
