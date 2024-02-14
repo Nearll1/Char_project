@@ -22,7 +22,7 @@ nickname = os.getenv('NICKNAME')
 token = os.getenv('OAUTH_TOKEN')
 
 #Ollama api (NO CHATGPT FOR YA!)
-ollama_api = 'https://3996-34-142-128-239.ngrok-free.app'
+ollama_api = ''
 
 
 #Run the VTS controller
