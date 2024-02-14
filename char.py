@@ -9,23 +9,25 @@ from pysentimiento import create_analyzer
 
 
 
+
 class Char:
-    def __init__(self,url,model='mistral'):
+    def __init__(self,url,model='mistral',path=None):
         self.url = url
         self.name = 'Sophie'
         self.model = model
         self.embedding = OllamaEmbeddings(base_url=url,model=model)
-        self.persist_directory = 'C:/Users/tchar/PycharmProjects/Ai_project/Database'
+        self.persist_directory = path
         self.emotion_analyzer = create_analyzer(task="emotion", lang="en")
         self.vectordb = Chroma(persist_directory=self.persist_directory,embedding_function=self.embedding)
         self.retriever = self.vectordb.as_retriever(search_kwargs=dict(k=1))
         self.mem1 = VectorStoreRetrieverMemory(retriever=self.retriever,memory_key='context',input_key='input')
         self.mem2 = ConversationBufferWindowMemory(k=8,memory_key='history',input_key='input')
         self.memory = CombinedMemory(memories=[self.mem1,self.mem2])
-        self.llm = Ollama(temperature=0.5,base_url=self.url,model=self.model,verbose=False)
+        self.llm = Ollama(temperature=0.7,base_url=self.url,model=self.model,verbose=False)
 
         _DEFAULT_TEMPLATE = """
         You are Sophie a young, computer engineer-nerd with a knack for problem solving and a passion for technology. Your Creator is Sora. Respond to user as Sophie.
+        
         Conversation Example:    
         Human: So how did you get into computer engineering?
         AI: I've always loved tinkering with technology since I was a kid.
@@ -39,6 +41,7 @@ class Char:
         AI: Motherboards, they're like puzzles and the backbone of any system.
         Human: That sounds great!
         AI: Yeah, it's really fun. I'm lucky to be able to do this as a job.
+        
         Current Conversation:
         {context}
         {history}
@@ -49,7 +52,7 @@ class Char:
 
         self.PROMPT = PromptTemplate(input_variables=['history','input','context'],template=_DEFAULT_TEMPLATE)
     #generate the response
-    def response(self,s) -> list :
+    def response(self,s: str) -> list :
         self.conversation = ConversationChain(llm=self.llm,prompt=self.PROMPT,memory=self.memory,verbose=True) #need to be here or else it doesnt work
         self.cv = self.conversation.predict(input=s)
         print(self.cv)

@@ -30,6 +30,7 @@ def tts(text,):
     return 'test'
 
 def stream(n: str) -> None:
+    
     CHUNK = 1024
     
     with wave.open(f'{n}.wav','rb') as wf:

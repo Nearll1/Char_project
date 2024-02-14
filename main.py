@@ -12,13 +12,17 @@ import os
 
 load_dotenv()
 
+#get path to Database
+path = os.path.join(os.path.dirname(__file__),'Database')
+
+
 #Twitch auth
 channel = os.getenv('CHANNEL_NAME')
 nickname = os.getenv('NICKNAME')
 token = os.getenv('OAUTH_TOKEN')
 
 #Ollama api (NO CHATGPT FOR YA!)
-ollama_api = '...'
+ollama_api = 'https://3996-34-142-128-239.ngrok-free.app'
 
 
 #Run the VTS controller
@@ -29,50 +33,53 @@ mode = input('Mode >> ')
 
 
 #Where the magic happens
-def main():
+async def main():
+    sem = asyncio.Semaphore(10)
     while True:
-        while(len(bot.chat_history) == 0):
-            print("no new messages")
-            time.sleep(1)
+        transcript = get_transcript()
+        response,emotion = get_response(transcript)
+        audio_file = tts(response)
         
+        await sem.acquire()
+        try:
+            y = threading.Thread(target=stream,args=[audio_file])
+            y.start()
+            if mode == '1':
+                x = threading.Thread(target=lambda :asyncio.run(main()))
+                x.start()
+            y.join()
+            asyncio.run(control.trigger(emotion))
+            print('Response Completed!')
+        finally:
+            sem.release()
+  
+
+#get the user input
+def get_transcript():
+    if mode == '1':
+        while(len(bot.chat_history) == 0):
+                print("no new messages")
+                time.sleep(1)
+            
         if len(bot.chat_history) > 5:
             bot.chat_history = bot.chat_history[-5:]
-            
-        transcript = f'{bot.chat_history[0][0]} : {bot.chat_history[0][1]}'
-        print(transcript)
-        
-        
-        rp = Char(url=ollama_api,model='mistral')
-        bot.chat_history.pop(0)
-        response,emotion = rp.response(transcript)
-        print(response)
-        print('--------')
-        print(emotion)
-        
-        audio_file = tts(response)
-        stream(audio_file)
-        if emotion:
-            asyncio.run(control.trigger(emotion))
-        print('Response Completed!')
+                
+            transcript = f'{bot.chat_history[0][0]} : {bot.chat_history[0][1]}'
+            print(transcript)
+            bot.chat_history.pop(0)
+            return transcript
+    else:
+        return input('>> ')
 
-def mode_0():
-    while True:
-        rp = Char(ollama_api,model='mistral')
-        user_msg = input('>')
-        if user_msg.lower() == 'exit':
-            break
-        response,emotion = rp.response(user_msg)
-        print(response)
-        print('--------')
-        print(emotion)
-            
-        audio_file = tts(response)
-        if not emotion:
-            stream(audio_file)
-            print('No emotion')
-        stream(audio_file)
-        asyncio.run(control.trigger(emotion))
-        print('Response Completed!')  
+#get the AI response
+def get_response(s: str):
+    rp = Char(url=ollama_api,model='mistral',path=path)
+        
+    response,emotion = rp.response(s)
+
+    return response,emotion
+
+
 
 if __name__ == '__main__':
     if mode == '1':
@@ -81,7 +88,7 @@ if __name__ == '__main__':
         threading.Thread(target=bot.run()).start()
         print(bot.chat_history)
 
-        main()
+        asyncio.run(main())
 
     else:
-        mode_0()
+        asyncio.run(main())
